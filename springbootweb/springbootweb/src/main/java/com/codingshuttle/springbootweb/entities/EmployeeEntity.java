@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 @Entity
 @Table(name = "employees")
@@ -22,4 +23,5 @@ public class EmployeeEntity {
     Integer age;
     LocalDate dateOfJoining;
     Boolean isActive;
+    BigDecimal salary;
 }

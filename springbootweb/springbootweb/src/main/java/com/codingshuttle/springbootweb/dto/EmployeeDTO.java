@@ -1,6 +1,7 @@
 package com.codingshuttle.springbootweb.dto;
 
 import com.codingshuttle.springbootweb.annotations.EmailNotValid;
+import com.codingshuttle.springbootweb.annotations.ValidPrimeNumber;
 import com.codingshuttle.springbootweb.util.TrimDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -40,5 +41,7 @@ public class EmployeeDTO {
     @DecimalMin(value = "100.50", message = "Salary cannot be less than 100.50")
     @DecimalMax(value = "999999.99", message = "Salary cannot be more than 999999.99")
     BigDecimal salary;
+    @ValidPrimeNumber
+    Integer primeNumber;
 
 }

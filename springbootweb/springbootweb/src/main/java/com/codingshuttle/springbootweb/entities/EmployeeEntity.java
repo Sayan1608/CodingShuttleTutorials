@@ -24,4 +24,5 @@ public class EmployeeEntity {
     LocalDate dateOfJoining;
     Boolean isActive;
     BigDecimal salary;
+    Integer primeNumber;
 }

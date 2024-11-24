@@ -21,4 +21,5 @@ public class DepartmentEntity {
     private String title;
     private Boolean isActive;
     private LocalDate createdOn;
+    private String password;
 }

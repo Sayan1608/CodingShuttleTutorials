@@ -33,6 +33,7 @@ public class ProductEntity {
     @Column(name = "product_name", length = 20)
     private String title;
     private BigDecimal price;
+    private Long quantity;
     @CreationTimestamp
     private LocalDateTime createdOn;
     @UpdateTimestamp

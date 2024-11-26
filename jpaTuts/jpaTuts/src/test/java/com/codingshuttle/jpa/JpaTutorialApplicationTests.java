@@ -55,7 +55,7 @@ class JpaTutorialApplicationTests {
 
 		System.out.println("Created on After : 2024-11-24 :: " + productRepository.findByCreatedOnBetween(
 				LocalDateTime.of(2024,11,24,0,0,0),
-				LocalDateTime.of(2024,11,27,0,0,0)) );
+				LocalDateTime.of(2024,11,27,0,0,0),null));
 
 		System.out.println(productRepository.findByTitleAndPrice("Mirinda", "50.5"));
 	}

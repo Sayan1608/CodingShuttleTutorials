@@ -38,7 +38,10 @@ public class DepartmentService {
     }
 
     public DepartmentEntity getAssignedDepartmentOfManager(Long id) {
-        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(id);
-        return employeeEntity.map(EmployeeEntity::getManagedDepartment).orElse(null);
+//        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(id);
+//        return employeeEntity.map(EmployeeEntity::getManagedDepartment).orElse(null);
+
+        EmployeeEntity employeeEntity = EmployeeEntity.builder().id(id).build();
+        return departmentRepository.findByManager(employeeEntity);
     }
 }

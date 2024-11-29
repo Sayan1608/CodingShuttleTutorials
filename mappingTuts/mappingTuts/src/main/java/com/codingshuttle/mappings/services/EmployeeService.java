@@ -20,4 +20,8 @@ public class EmployeeService {
     public EmployeeEntity createNewEmployee(EmployeeEntity employeeEntity) {
         return employeeRepository.save(employeeEntity);
     }
+
+    public void deleteEmployeeById(Long id) {
+        employeeRepository.deleteById(id);
+    }
 }

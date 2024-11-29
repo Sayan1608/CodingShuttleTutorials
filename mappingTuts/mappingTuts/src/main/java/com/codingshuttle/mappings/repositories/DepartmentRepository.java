@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface DepartmentRepository extends JpaRepository<DepartmentEntity, Long> {
     DepartmentEntity findByManager(EmployeeEntity employeeEntity);
+
+    DepartmentEntity findByWorkers(EmployeeEntity build);
 }

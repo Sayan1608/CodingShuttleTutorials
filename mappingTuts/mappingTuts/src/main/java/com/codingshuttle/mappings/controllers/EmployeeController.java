@@ -23,4 +23,9 @@ public class EmployeeController {
         return employeeService.createNewEmployee(employeeEntity);
     }
 
+    @DeleteMapping(path = "/{employeeId}")
+    public void deleteEmployeeById(@PathVariable(name = "employeeId") Long id){
+        employeeService.deleteEmployeeById(id);
+    }
+
 }

@@ -34,4 +34,24 @@ public class DepartmentController {
     public DepartmentEntity getAssignedDepartmentOfManager(@PathVariable(name = "managerId") Long id){
         return departmentService.getAssignedDepartmentOfManager(id);
     }
+
+    @PutMapping(path = "/{departmentId}/worker/{employeeId}")
+    public DepartmentEntity assignWorkerToDepartment(
+            @PathVariable(name = "departmentId") Long departmentId,
+            @PathVariable(name = "employeeId") Long employeeId){
+        return departmentService.assignWorkerToDepartment(departmentId,employeeId);
+    }
+
+    @PutMapping(path = "/{departmentId}/freelancer/{employeeId}")
+    public DepartmentEntity assignFreelancerToDepartment(
+            @PathVariable(name = "departmentId") Long departmentId,
+            @PathVariable(name = "employeeId") Long employeeId){
+        return departmentService.assignFreelancerToDepartment(departmentId,employeeId);
+    }
+
+    @GetMapping(path = "/worker/{employeeId}")
+    public DepartmentEntity getAssignedDepartmentOfWorker(@PathVariable(name = "employeeId") Long id){
+        return departmentService.getAssignedDepartmentOfWorker(id);
+    }
+
 }

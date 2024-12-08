@@ -64,6 +64,12 @@ public class EmployeeService {
         return true;
     }
 
+    public void validateBookInDto(Map<String, Object> updates){
+        updates.forEach((key,value)->{
+
+        });
+    }
+
     public EmployeeDTO updatePartialEmployeeById(Map<String, Object> updates, Long id) {
         isExistsEmployeeById(id);
         EmployeeEntity employeeEntity = employeeRepository.findById(id).get();

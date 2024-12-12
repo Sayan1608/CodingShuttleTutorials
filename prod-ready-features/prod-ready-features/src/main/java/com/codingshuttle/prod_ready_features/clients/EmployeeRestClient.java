@@ -6,5 +6,11 @@ import com.codingshuttle.prod_ready_features.dtos.EmployeeDTO;
 import java.util.List;
 
 public interface EmployeeRestClient {
-    public ApiResponse<List<EmployeeDTO>> getEmployeeDetails();
+    public List<EmployeeDTO> getAllEmployees();
+
+    public EmployeeDTO getEmployeeById(Long employeeId);
+
+    public EmployeeDTO createNewEmployee(EmployeeDTO employeeDTO);
+
+
 }

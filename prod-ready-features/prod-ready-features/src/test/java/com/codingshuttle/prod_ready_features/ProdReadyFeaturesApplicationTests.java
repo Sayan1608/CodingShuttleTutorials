@@ -1,5 +1,6 @@
 package com.codingshuttle.prod_ready_features;
 
+import com.codingshuttle.prod_ready_features.clients.CurrencyRestClient;
 import com.codingshuttle.prod_ready_features.clients.EmployeeRestClient;
 import com.codingshuttle.prod_ready_features.dtos.EmployeeDTO;
 import org.junit.jupiter.api.MethodOrderer;
@@ -19,6 +20,9 @@ class ProdReadyFeaturesApplicationTests {
 
 	@Autowired
 	EmployeeRestClient employeeRestClient;
+
+	@Autowired
+	CurrencyRestClient currencyRestClient;
 
 	@Test
 	@Order(3)
@@ -49,6 +53,12 @@ class ProdReadyFeaturesApplicationTests {
 
 		EmployeeDTO savedEmployeeDto = employeeRestClient.createNewEmployee(employeeDTO);
 		System.out.println(savedEmployeeDto);
+	}
+
+	@Test
+	void convertCurrency(){
+		System.out.println(currencyRestClient
+				.convertCurrency("INR","USD,EUR"));
 	}
 
 }

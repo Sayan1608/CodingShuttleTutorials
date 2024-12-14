@@ -6,6 +6,7 @@ import com.codingshuttle.prod_ready_features.dtos.EmployeeDTO;
 import com.codingshuttle.prod_ready_features.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,13 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeRestClientImpl implements EmployeeRestClient {
 
-    @Autowired
     private final RestClient restClient;
+
+    public EmployeeRestClientImpl( @Qualifier("employeeRestClient") RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     @Override
     public List<EmployeeDTO> getAllEmployees() {

@@ -3,6 +3,7 @@ package com.codingshuttle.securityapp.advices;
 import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,6 +42,19 @@ public class GlobalExceptionHandler {
 
         return buildApiResponse(apiError);
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<?>> handleBadCredentialsException(BadCredentialsException exception){
+        ApiError apiError = ApiError
+                .builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(exception.getMessage())
+                .build();
+
+        return buildApiResponse(apiError);
+    }
+
+
 
 
     private ResponseEntity<ApiResponse<?>> buildApiResponse(ApiError apiError){

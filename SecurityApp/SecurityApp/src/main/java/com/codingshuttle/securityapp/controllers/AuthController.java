@@ -5,6 +5,8 @@ import com.codingshuttle.securityapp.dtos.LoginDto;
 import com.codingshuttle.securityapp.dtos.SignUpDto;
 import com.codingshuttle.securityapp.dtos.UserDto;
 import com.codingshuttle.securityapp.services.AuthService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +27,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDto loginDto, HttpServletResponse servletResponse) {
         String token = authService.login(loginDto);
+        Cookie cookie = new Cookie("token",token);
+        servletResponse.addCookie(cookie);
         ApiResponse<String> response = new ApiResponse<>(token);
         return ResponseEntity.ok(response);
     }

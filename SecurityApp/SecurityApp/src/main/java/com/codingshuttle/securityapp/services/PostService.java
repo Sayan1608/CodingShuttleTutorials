@@ -3,16 +3,20 @@ package com.codingshuttle.securityapp.services;
 
 import com.codingshuttle.securityapp.dtos.PostDto;
 import com.codingshuttle.securityapp.entities.PostEntity;
+import com.codingshuttle.securityapp.entities.User;
 import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.securityapp.repositories.PostRepository;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
@@ -32,6 +36,8 @@ public class PostService {
     }
 
     public PostDto getPostById(Long postId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("user {} : ",user);
         isExistsPostById(postId);
         PostEntity postEntity = postRepository.findById(postId).get();
         return modelMapper.map(postEntity, PostDto.class);

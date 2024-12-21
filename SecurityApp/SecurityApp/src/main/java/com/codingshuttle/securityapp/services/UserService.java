@@ -1,5 +1,6 @@
 package com.codingshuttle.securityapp.services;
 
+import com.codingshuttle.securityapp.entities.User;
 import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.securityapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,11 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(()->new ResourceNotFoundException("User not found with email : " + username));
+    }
+
+    public User getUserById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()->new ResourceNotFoundException("User not found with id : " + userId));
     }
 
 }

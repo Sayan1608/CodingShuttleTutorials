@@ -1,9 +1,11 @@
 package com.codingshuttle.securityapp.services;
 
 import com.codingshuttle.securityapp.dtos.LoginDto;
+import com.codingshuttle.securityapp.dtos.LoginResponseDto;
 import com.codingshuttle.securityapp.dtos.SignUpDto;
 import com.codingshuttle.securityapp.dtos.UserDto;
 import com.codingshuttle.securityapp.entities.User;
+import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.securityapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,12 +38,21 @@ public class AuthService {
         return modelMapper.map(savedUser, UserDto.class);
     }
 
-    public String login(LoginDto loginDto) {
+    public LoginResponseDto login(LoginDto loginDto) {
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
         User user = (User) authenticate.getPrincipal();
-        String token = jwtService.generateToken(user);
-        return token;
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        return new LoginResponseDto(user.getId(),accessToken,refreshToken);
+    }
+
+    public LoginResponseDto refreshToken(String refreshToken) {
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
+        String accessToken = jwtService.generateAccessToken(user);
+        return new LoginResponseDto(user.getId(),accessToken,refreshToken);
     }
 }

@@ -36,8 +36,6 @@ public class PostService {
     }
 
     public PostDto getPostById(Long postId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("user {} : ",user);
         isExistsPostById(postId);
         PostEntity postEntity = postRepository.findById(postId).get();
         return modelMapper.map(postEntity, PostDto.class);

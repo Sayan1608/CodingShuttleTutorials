@@ -1,9 +1,6 @@
 package com.codingshuttle.securityapp.services;
 
-import com.codingshuttle.securityapp.dtos.LoginDto;
-import com.codingshuttle.securityapp.dtos.LoginResponseDto;
-import com.codingshuttle.securityapp.dtos.SignUpDto;
-import com.codingshuttle.securityapp.dtos.UserDto;
+import com.codingshuttle.securityapp.dtos.*;
 import com.codingshuttle.securityapp.entities.User;
 import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.securityapp.repositories.UserRepository;
@@ -26,6 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final SessionService sessionService;
 
     public UserDto signUp(SignUpDto signUpDto) {
         Optional<User> user = userRepository.findByEmail(signUpDto.getEmail());
@@ -45,13 +43,23 @@ public class AuthService {
         User user = (User) authenticate.getPrincipal();
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
+        sessionService.generateSession(user,refreshToken);
         return new LoginResponseDto(user.getId(),accessToken,refreshToken);
+    }
+
+    public String logout(String refreshToken){
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
+        sessionService.logOutAndClearUserSessions(user);
+        return "Logged Out Successfully";
     }
 
     public LoginResponseDto refreshToken(String refreshToken) {
         Long userId = jwtService.getUserIdFromToken(refreshToken);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
+        sessionService.validateSession(refreshToken);
         String accessToken = jwtService.generateAccessToken(user);
         return new LoginResponseDto(user.getId(),accessToken,refreshToken);
     }

@@ -3,6 +3,7 @@ package com.codingshuttle.securityapp.config;
 import com.codingshuttle.securityapp.entities.enums.Roles;
 import com.codingshuttle.securityapp.filters.JwtAuthFilter;
 import com.codingshuttle.securityapp.handlers.OAuth2SuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,11 +36,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(publicRoutes).permitAll()
                         .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/posts/**")
-                        .hasAnyRole(ADMIN.name(), CREATOR.name())
+                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(ADMIN.name(), CREATOR.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig->csrfConfig.disable())
                 .sessionManagement(sessionConfig->sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionConfig -> exceptionConfig
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Handle 403 Forbidden for authenticated users without the required role
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write("Access Denied: You don't have permission to access this resource.");
+                        })) // No explicit AuthenticationEntryPoint needed for OAuth2 login
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oAuth2Config->
                         oAuth2Config.failureUrl("/login?error=true")

@@ -49,4 +49,8 @@ public class SessionService {
         sessionRepository.deleteAll(userSessions);
     }
 
+    public boolean isSessionAvailableForUser(User user){
+        return sessionRepository.existsByUser(user);
+    }
+
 }

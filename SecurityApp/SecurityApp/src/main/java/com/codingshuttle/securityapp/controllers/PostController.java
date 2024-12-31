@@ -1,9 +1,13 @@
 package com.codingshuttle.securityapp.controllers;
 
 import com.codingshuttle.securityapp.dtos.PostDto;
+import com.codingshuttle.securityapp.entities.User;
+import com.codingshuttle.securityapp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.securityapp.services.PostService;
+import com.codingshuttle.securityapp.services.SessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,9 +17,11 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final SessionService sessionService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, SessionService sessionService) {
         this.postService = postService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping
@@ -25,6 +31,10 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostDto> createNewPost(@RequestBody @Valid PostDto postDto){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       if(!sessionService.isSessionAvailableForUser(user)){
+           throw new ResourceNotFoundException("Session Expired for the User : " + user.getEmail());
+       }
         return ResponseEntity.ok(postService.createNewPost(postDto));
     }
 

@@ -17,4 +17,6 @@ public class PostDto {
     private String title;
     @NotBlank(message = "Post description cannot be empty")
     private String description;
+
+    private UserDto author;
 }

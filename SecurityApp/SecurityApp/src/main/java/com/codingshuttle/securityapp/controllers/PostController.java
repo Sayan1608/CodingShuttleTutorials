@@ -7,6 +7,8 @@ import com.codingshuttle.securityapp.services.PostService;
 import com.codingshuttle.securityapp.services.SessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +27,13 @@ public class PostController {
     }
 
     @GetMapping
+    @Secured({"ROLE_ADMIN","ROLE_USER"})
     public ResponseEntity<List<PostDto>> getAllPosts(){
         return ResponseEntity.ok(postService.getAllPosts());
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN') OR hasAuthority('POST_CREATE')")
     public ResponseEntity<PostDto> createNewPost(@RequestBody @Valid PostDto postDto){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
        if(!sessionService.isSessionAvailableForUser(user)){
@@ -39,6 +43,7 @@ public class PostController {
     }
 
     @GetMapping(path = "/post/{postId}")
+    @PreAuthorize("@postSecurity.isOwnerOfPost(#postId)")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "postId") Long postId){
         return ResponseEntity.ok(postService.getPostById(postId));
     }

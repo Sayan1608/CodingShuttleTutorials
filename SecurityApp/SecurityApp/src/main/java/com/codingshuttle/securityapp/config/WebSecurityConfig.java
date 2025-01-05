@@ -7,8 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +27,7 @@ import static com.codingshuttle.securityapp.entities.enums.Role.CREATOR;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -35,21 +39,19 @@ public class WebSecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(publicRoutes).permitAll()
-//                        .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/posts/**").authenticated()
 //                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(ADMIN.name(), CREATOR.name())
-                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyAuthority(POST_CREATE.name())
-                        .requestMatchers(HttpMethod.GET,"/posts/**").hasAnyAuthority(POST_VIEW.name())
-                        .requestMatchers(HttpMethod.PUT,"/posts/**").hasAnyAuthority(POST_UPDATE.name())
-                        .requestMatchers(HttpMethod.DELETE,"/posts/**").hasAnyAuthority(POST_DELETE.name())
+//                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyAuthority(POST_CREATE.name())
+//                        .requestMatchers(HttpMethod.GET,"/posts/**").hasAnyAuthority(POST_VIEW.name())
+//                        .requestMatchers(HttpMethod.PUT,"/posts/**").hasAnyAuthority(POST_UPDATE.name())
+//                        .requestMatchers(HttpMethod.DELETE,"/posts/**").hasAnyAuthority(POST_DELETE.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig->csrfConfig.disable())
                 .sessionManagement(sessionConfig->sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionConfig -> exceptionConfig
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            // Handle 403 Forbidden for authenticated users without the required role
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("Access Denied: You don't have permission to access this resource.");
-                        })) // No explicit AuthenticationEntryPoint needed for OAuth2 login
+                            throw new AccessDeniedException("Custom Access Denied: You don't have permission to access this resource."); // Let the global handler process this
+                        }))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oAuth2Config->
                         oAuth2Config.failureUrl("/login?error=true")

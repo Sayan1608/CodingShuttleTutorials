@@ -1,6 +1,6 @@
 package com.codingshuttle.securityapp.entities.enums;
 
-public enum Roles {
+public enum Role {
     USER,
     CREATOR,
     ADMIN

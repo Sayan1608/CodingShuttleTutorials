@@ -1,6 +1,5 @@
 package com.codingshuttle.securityapp.config;
 
-import com.codingshuttle.securityapp.entities.enums.Roles;
 import com.codingshuttle.securityapp.filters.JwtAuthFilter;
 import com.codingshuttle.securityapp.handlers.OAuth2SuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.codingshuttle.securityapp.entities.enums.Roles.ADMIN;
-import static com.codingshuttle.securityapp.entities.enums.Roles.CREATOR;
+import static com.codingshuttle.securityapp.entities.enums.Permission.*;
+import static com.codingshuttle.securityapp.entities.enums.Role.ADMIN;
+import static com.codingshuttle.securityapp.entities.enums.Role.CREATOR;
 
 @Configuration
 @EnableWebSecurity
@@ -35,8 +35,12 @@ public class WebSecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(publicRoutes).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(ADMIN.name(), CREATOR.name())
+//                        .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(ADMIN.name(), CREATOR.name())
+                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyAuthority(POST_CREATE.name())
+                        .requestMatchers(HttpMethod.GET,"/posts/**").hasAnyAuthority(POST_VIEW.name())
+                        .requestMatchers(HttpMethod.PUT,"/posts/**").hasAnyAuthority(POST_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE,"/posts/**").hasAnyAuthority(POST_DELETE.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig->csrfConfig.disable())
                 .sessionManagement(sessionConfig->sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

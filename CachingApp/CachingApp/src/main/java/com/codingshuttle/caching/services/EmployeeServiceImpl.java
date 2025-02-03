@@ -32,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    @CachePut(cacheNames = EMPLOYEE, key = "#id")
+    @CachePut(cacheNames = EMPLOYEE, key = "#result.id")
     public EmployeeDto createNewEmployee(EmployeeDto employeeDto) {
         log.info("Creating a New Employee from EmployeeServiceImpl.createNewEmployee()");
         Employee employee = modelMapper.map(employeeDto, Employee.class);

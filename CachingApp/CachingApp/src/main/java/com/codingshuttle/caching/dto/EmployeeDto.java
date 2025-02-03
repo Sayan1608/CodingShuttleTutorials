@@ -5,10 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class EmployeeDto {
+public class EmployeeDto implements Serializable {
     private Long id;
     @NotBlank
     private String name;
